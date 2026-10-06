@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Purwarupa REM DARURAT · Protokol Lapor Satu Sentuh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B2A5B;--navy-2:#173A6B;--ink:#14213D;--mut:#52617c;--line:#dbe3f0;--bg:#F3F6FB;--card:#fff;
+  --A:#1F5FD0;--A-soft:#E3ECFC;      /* TANDA REKENING */
+  --B:#6D3FC0;--B-soft:#EDE5FA;      /* TOMBOL TERTIPU */
+  --C:#14794B;--C-soft:#DDF3E8;      /* JEJAK DANA / aman */
+  --Y:#9A6700;--Y-soft:#FFF1CC;      /* kuning */
+  --R:#B42318;--R-soft:#FDE6E3;      /* merah / bahaya */
+  --r:16px;--sp:16px;
+  --font:'Plus Jakarta Sans','Segoe UI',system-ui,-apple-system,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:var(--font);font-size:16px;line-height:1.5;color:var(--ink);background:linear-gradient(160deg,#dfe8f7,#eef2f9 60%);-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #1F5FD0;outline-offset:2px;border-radius:8px}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ===== layout ===== */
+.app{min-height:100%;display:grid;grid-template-columns:minmax(0,1fr);gap:24px;padding:20px;justify-content:center;align-items:start}
+@media(min-width:960px){.app{grid-template-columns:420px 400px;padding:32px 24px}}
+.phone{position:relative;width:100%;max-width:420px;height:min(860px,calc(100vh - 40px));min-height:640px;margin:0 auto;background:var(--bg);border-radius:40px;border:10px solid var(--navy);box-shadow:0 24px 60px rgba(11,42,91,.28);display:flex;flex-direction:column;overflow:hidden}
+@media(max-width:600px){.app{padding:0;gap:0}.phone{max-width:none;height:100vh;height:100dvh;border:0;border-radius:0;box-shadow:none}.demo{margin:16px}}
+.status{display:flex;justify-content:space-between;align-items:center;padding:10px 22px 4px;font-size:13px;font-weight:700;color:var(--navy);background:var(--card)}
+.screens{flex:1;overflow-y:auto;position:relative;scroll-behavior:smooth}
+.screen{display:none;padding:0 0 24px;animation:in .22s ease-out}
+.screen.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.top{display:flex;align-items:center;gap:8px;padding:12px 12px 12px 8px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:3}
+.top h1{margin:0;font-size:18px;font-weight:800;color:var(--navy)}
+.iconbtn{width:44px;height:44px;border:0;background:transparent;border-radius:12px;display:grid;place-items:center;cursor:pointer;color:var(--navy)}
+.iconbtn:hover{background:var(--bg)}
+.pad{padding:16px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.card h2{margin:0 0 6px;font-size:16px;font-weight:800;color:var(--navy)}
+.mut{color:var(--mut);font-size:14px}
+.label{display:block;font-size:14px;font-weight:700;margin:0 0 6px;color:var(--navy)}
+.input{width:100%;min-height:48px;border:1.5px solid #b8c4d9;border-radius:12px;padding:10px 14px;background:#fff;font-size:17px;font-weight:600;letter-spacing:.3px}
+.input:focus{outline:3px solid #1F5FD0;outline-offset:1px;border-color:var(--A)}
+textarea.input{font-size:16px;font-weight:500;letter-spacing:0;min-height:96px;resize:vertical}
+.btn{min-height:48px;width:100%;border:2px solid transparent;border-radius:14px;padding:10px 16px;font-weight:800;font-size:16px;cursor:pointer;display:flex;gap:8px;align-items:center;justify-content:center;transition:transform .15s ease,background .15s ease,box-shadow .15s ease}
+.btn:active{transform:scale(.98)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.p{background:var(--navy);color:#fff}.btn.p:hover:not([disabled]){background:#0f3a7c}
+.btn.g{background:var(--C);color:#fff}.btn.g:hover:not([disabled]){background:#0f6a41}
+.btn.s{background:#fff;border-color:var(--navy);color:var(--navy)}
+.btn.s:hover:not([disabled]){background:var(--A-soft)}
+.btn.d{background:var(--R);color:#fff;min-height:56px;font-size:17px;box-shadow:0 6px 16px rgba(180,35,24,.28)}
+.btn.d:hover{background:#9c1c12}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12.5px;font-weight:800;letter-spacing:.2px}
+.cA{background:var(--A-soft);color:var(--A)}.cB{background:var(--B-soft);color:var(--B)}.cC{background:var(--C-soft);color:var(--C)}
+.cY{background:var(--Y-soft);color:var(--Y)}.cR{background:var(--R-soft);color:var(--R)}.cN{background:#E5EAF3;color:var(--navy)}
+.row{display:flex;gap:10px;align-items:center}
+.sp{justify-content:space-between}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:15px}
+.kv:last-child{border-bottom:0}
+.kv b{text-align:right}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.pill{min-height:44px;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.pill:hover{border-color:var(--navy)}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+
+/* home */
+.hero{background:linear-gradient(150deg,var(--navy),#1b4fa0);color:#fff;border-radius:20px;padding:20px}
+.hero .bal{font-size:30px;font-weight:800;letter-spacing:-.5px}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.quick button{min-height:84px;border:1px solid var(--line);background:#fff;border-radius:16px;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--navy);cursor:pointer}
+.quick button:hover{background:var(--A-soft)}
+.mod{display:flex;gap:12px;align-items:flex-start}
+.mod .ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:0 0 auto}
+.txi{display:flex;gap:12px;align-items:center;width:100%;min-height:64px;padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:14px;cursor:pointer;text-align:left}
+.txi:hover{border-color:var(--navy)}
+.txi .av{width:42px;height:42px;border-radius:50%;background:#E5EAF3;color:var(--navy);display:grid;place-items:center;flex:0 0 auto}
+.txi .m{flex:1;min-width:0}
+.txi .m b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.amt{font-weight:800;white-space:nowrap}
+
+/* tanda */
+.ticker{border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;font-size:14.5px;line-height:1.45;border:1.5px solid}
+.t-h{background:var(--C-soft);border-color:#9fd6b9;color:#0b4d2f}
+.t-k{background:var(--Y-soft);border-color:#e6c36a;color:#5e3f00}
+.t-m{background:var(--R-soft);border-color:#f0a59d;color:#7a1710}
+.big{border-radius:20px;padding:20px;text-align:center}
+.big .ring{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;margin:0 auto 10px;background:#fff}
+.big h2{font-size:21px;margin:0 0 6px}
+.check{display:flex;gap:12px;align-items:flex-start;min-height:48px;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-size:15px;font-weight:600}
+.check input{width:24px;height:24px;margin:0;flex:0 0 auto;accent-color:var(--navy)}
+
+/* status */
+.bar{position:relative;height:16px;border-radius:999px;background:#E5EAF3;overflow:hidden}
+.bar .zone{position:absolute;left:0;top:0;bottom:0;background:#bde6cf}
+.bar .fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px;transition:width .6s ease}
+.bar-l{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-top:6px;font-weight:600}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.steps li{display:flex;gap:12px;align-items:flex-start;opacity:.45;transition:opacity .3s}
+.steps li.on{opacity:1}
+.steps .n{width:28px;height:28px;border-radius:50%;background:#cfd8e8;color:#fff;display:grid;place-items:center;flex:0 0 auto;font-weight:800;font-size:13px}
+.steps li.on .n{background:var(--C)}
+.lvl{border-radius:12px;padding:10px 12px;font-weight:700;font-size:14.5px;margin-top:6px}
+
+/* tabbar */
+.tabbar{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabbar button{min-height:56px;border:0;background:transparent;display:flex;flex-direction:column;gap:2px;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;color:var(--mut);cursor:pointer;border-radius:12px}
+.tabbar button[aria-current="page"]{color:var(--navy);background:var(--A-soft)}
+.tabbar.off{display:none}
+
+/* sheet */
+.scrim{position:absolute;inset:0;background:rgba(11,20,40,.5);opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:24px 24px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .26s ease;z-index:21;max-height:88%;overflow:auto}
+.sheet.on{transform:none}
+.grab{width:44px;height:5px;border-radius:9px;background:#cfd8e8;margin:0 auto 12px}
+
+/* demo panel */
+.demo{display:flex;flex-direction:column;gap:14px;max-width:420px;margin:0 auto;width:100%}
+@media(min-width:960px){.demo{position:sticky;top:32px;max-height:calc(100vh - 64px);overflow:auto;padding-right:4px}}
+.demo .card{box-shadow:0 2px 10px rgba(11,42,91,.06)}
+.demo h1{font-size:22px;margin:0;color:var(--navy);font-weight:800;line-height:1.2}
+.demo ol{margin:6px 0 0;padding-left:20px;font-size:14.5px}
+.demo ol li{margin:4px 0}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.seg button{min-height:44px;border:1.5px solid var(--line);background:#fff;border-radius:10px;font-weight:700;font-size:13.5px;cursor:pointer}
+.seg button:hover{border-color:var(--navy)}
+.seg button[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.console svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:8px}
+.note{font-size:13px;color:var(--mut)}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><path d="M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
+  <symbol id="i-brake" viewBox="0 0 24 24"><path d="M7 18v-6a5 5 0 0 1 10 0v6M5 18h14v3H5zM12 2v2M4.2 5.2l1.4 1.4M19.8 5.2l-1.4 1.4"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v3a3 3 0 0 0 3 3h6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v7M10 10.5V6a2 2 0 0 0-4 0v8c0 4 3 7 7 7h1a6 6 0 0 0 6-6v-4a2 2 0 0 0-4 0"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h13v4M3 7v11a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1-2-2zM16 14h.01"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2L3 14h8l-1 8 10-12h-8z"/></symbol>
+</svg>
+
+<div class="app">
+  <!-- ===================== PONSEL ===================== -->
+  <main class="phone" id="phone" aria-label="Purwarupa aplikasi bank dengan REM DARURAT">
+    <div class="status"><span id="clock">14.05</span><span>BankKita · demo</span></div>
+
+    <div class="screens" id="screens">
+
+      <!-- BERANDA -->
+      <section class="screen on" id="s-home" aria-labelledby="h-home">
+        <div class="pad stack">
+          <div class="hero">
+            <div class="row sp"><span style="font-weight:600;opacity:.9" id="h-home">Selamat siang, Dimas</span><span class="chip" style="background:rgba(255,255,255,.18);color:#fff"><svg class="i" style="width:14px;height:14px"><use href="#i-shield"/></svg>REM DARURAT aktif</span></div>
+            <div style="opacity:.85;margin-top:14px;font-size:14px">Saldo tabungan</div>
+            <div class="bal" id="bal">Rp12.450.000</div>
+          </div>
+          <div class="quick">
+            <button data-go="transfer"><svg class="i"><use href="#i-send"/></svg>Transfer</button>
+            <button data-go="riwayat"><svg class="i"><use href="#i-clock"/></svg>Riwayat</button>
+            <button data-go="bantuan"><svg class="i"><use href="#i-help"/></svg>Bantuan</button>
+          </div>
+          <div class="card">
+            <h2>Perlindungan transaksi Anda</h2>
+            <div class="stack" style="gap:10px;margin-top:8px">
+              <div class="mod"><span class="ic cA"><svg class="i"><use href="#i-shield"/></svg></span><div><b>TANDA REKENING</b><div class="mut">Rekening tujuan dicek sebelum tombol kirim.</div></div></div>
+              <div class="mod"><span class="ic cB"><svg class="i"><use href="#i-brake"/></svg></span><div><b>TOMBOL TERTIPU</b><div class="mut">Lapor ke IASC dengan satu sentuhan dari bukti transaksi.</div></div></div>
+              <div class="mod"><span class="ic cC"><svg class="i"><use href="#i-route"/></svg></span><div><b>JEJAK DANA</b><div class="mut">Aliran dana ditelusuri, tindakan sesuai tingkat risiko.</div></div></div>
+            </div>
+          </div>
+          <div class="card"><h2>Transaksi terakhir</h2><div class="stack" id="home-tx" style="margin-top:8px"></div></div>
+        </div>
+      </section>
+
+      <!-- TRANSFER -->
+      <section class="screen" id="s-transfer" aria-labelledby="h-transfer">
+        <div class="top"><button class="iconbtn" data-go="home" aria-label="Kembali ke beranda"><svg class="i"><use href="#i-back"/></svg></button><h1 id="h-transfer">Transfer</h1></div>
+        <div class="pad stack">
+          <div>
+            <label class="label" for="rek">Rekening tujuan</label>
+            <input class="input" id="rek" inputmode="numeric" autocomplete="off" placeholder="Ketik nomor rekening" maxlength="16" aria-describedby="rek-help rek-res">
+            <div class="mut" id="rek-help" style="margin-top:6px">Data contoh untuk demo, pilih salah satu:</div>
+            <div class="chips" style="margin-top:8px">
+              <button class="pill" data-fill="8801 2345 678"><span class="dot" style="background:var(--C)"></span>Contoh hijau</button>
+              <button class="pill" data-fill="5521 9087 345"><span class="dot" style="background:#E0A32E"></span>Contoh kuning</button>
+              <button class="pill" data-fill="7710 4432 190"><span class="dot" style="background:var(--R)"></span>Contoh merah</button>
+            </div>
+          </div>
+          <div id="rek-res" aria-live="polite"></div>
+          <div>
+            <label class="label" for="nom">Nominal (Rp)</label>
+            <input class="input" id="nom" inputmode="numeric" value="750.000" autocomplete="off">
+          </div>
+          <button class="btn p" id="go-review" disabled>Lanjut</button>
+        </div>
+      </section>
+
+      <!-- INTERSTITIAL TANDA -->
+      <section class="screen" id="s-tanda" aria-labelledby="h-tanda">
+        <div class="top"><button class="iconbtn" data-act="cancel-tx" aria-label="Batalkan dan kembali"><svg class="i"><use href="#i-back"/></svg></button><h1>Periksa dulu</h1></div>
+        <div class="pad stack" id="tanda-body"></div>
+      </section>
+
+      <!-- REVIEW -->
+      <section class="screen" id="s-review" aria-labelledby="h-review">
+        <div class="top"><button class="iconbtn" data-go="transfer" aria-label="Kembali"><svg class="i"><use href="#i-back"/></svg></button><h1 id="h-review">Tinjau transfer</h1></div>
+        <div class="pad stack" id="review-body"></div>
+      </section>
+
+      <!-- SUKSES -->
+      <section class="screen" id="s-done" aria-labelledby="h-done">
+        <div class="pad stack" id="done-body"></div>
+      </section>
+
+      <!-- RIWAYAT -->
+      <section class="screen" id="s-riwayat" aria-labelledby="h-riwayat">
+        <div class="top"><h1 id="h-riwayat" style="padding-left:8px">Riwayat transaksi</h1></div>
+        <div class="pad stack" id="riwayat-list"></div>
+      </section>
+
+      <!-- DETAIL BUKTI -->
+      <section class="screen" id="s-detail" aria-labelledby="h-detail">
+        <div class="top"><button class="iconbtn" data-go="riwayat" aria-label="Kembali ke riwayat"><svg class="i"><use href="#i-back"/></svg></button><h1 id="h-detail">Bukti transaksi</h1></div>
+        <div class="pad stack" id="detail-body"></div>
+      </section>
+
+      <!-- STATUS LAPORAN -->
+      <section class="screen" id="s-status" aria-labelledby="h-status">
+        <div class="top"><button class="iconbtn" data-go="riwayat" aria-label="Kembali ke riwayat"><svg class="i"><use href="#i-back"/></svg></button><h1 id="h-status">Status laporan</h1></div>
+        <div class="pad stack" id="status-body"></div>
+      </section>
+
+      <!-- BANTUAN -->
+      <section class="screen" id="s-bantuan" aria-labelledby="h-bantuan">
+        <div class="top"><h1 id="h-bantuan" style="padding-left:8px">Bantuan dan hak Anda</h1></div>
+        <div class="pad stack">
+          <div class="card"><h2>Hak pengguna REM DARURAT</h2>
+            <div class="stack" style="gap:8px;margin-top:6px;font-size:15px">
+              <div class="row"><svg class="i" style="color:var(--C)"><use href="#i-check"/></svg>Mengetahui mengapa rekening ditandai</div>
+              <div class="row"><svg class="i" style="color:var(--C)"><use href="#i-check"/></svg>Memilih batal atau lanjut setelah konfirmasi</div>
+              <div class="row"><svg class="i" style="color:var(--C)"><use href="#i-check"/></svg>Mengajukan keberatan atas penandaan</div>
+              <div class="row"><svg class="i" style="color:var(--C)"><use href="#i-check"/></svg>Data dibatasi pada data transaksi saja</div>
+            </div>
+          </div>
+          <div class="card"><h2>Kanal lama tetap tersedia</h2><div class="mut">Nasabah yang tidak memakai aplikasi tetap dapat melapor lewat kanal pengaduan IASC dan layanan bank.</div></div>
+          <div class="card" id="obj-card">
+            <h2>Ajukan keberatan</h2>
+            <div class="mut" style="margin-bottom:10px">Rekening Anda ditandai padahal sah? Keberatan ditinjau petugas bank, tidak diputus mesin.</div>
+            <label class="label" for="obj-rek">Nomor rekening yang ditandai</label>
+            <input class="input" id="obj-rek" inputmode="numeric" placeholder="Nomor rekening" style="margin-bottom:10px">
+            <label class="label" for="obj-why">Alasan keberatan</label>
+            <textarea class="input" id="obj-why" placeholder="Jelaskan singkat"></textarea>
+            <button class="btn s" id="obj-send" style="margin-top:12px">Kirim keberatan</button>
+            <div id="obj-res" aria-live="polite" style="margin-top:10px"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <nav class="tabbar" id="tabbar" aria-label="Navigasi utama">
+      <button data-go="home" data-tab="home"><svg class="i"><use href="#i-home"/></svg>Beranda</button>
+      <button data-go="transfer" data-tab="transfer"><svg class="i"><use href="#i-send"/></svg>Transfer</button>
+      <button data-go="riwayat" data-tab="riwayat"><svg class="i"><use href="#i-clock"/></svg>Riwayat</button>
+      <button data-go="bantuan" data-tab="bantuan"><svg class="i"><use href="#i-help"/></svg>Bantuan</button>
+    </nav>
+
+    <div class="scrim" id="scrim"></div>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-t" aria-hidden="true">
+      <div class="grab"></div>
+      <h2 id="sheet-t" style="margin:0 0 4px;font-size:19px;color:var(--navy)">Lapor ke IASC?</h2>
+      <div class="mut" style="margin-bottom:10px">Data berikut terisi otomatis dan dikirim tanpa perlu diketik ulang.</div>
+      <div id="sheet-body"></div>
+      <div class="ticker t-k" style="margin:12px 0"><svg class="i"><use href="#i-lock"/></svg><span>Hanya data transaksi yang dikirim, sesuai UU Pelindungan Data Pribadi.</span></div>
+      <div class="stack">
+        <button class="btn d" id="sheet-ok"><svg class="i"><use href="#i-brake"/></svg>Kirim laporan sekarang</button>
+        <button class="btn s" id="sheet-no">Batal</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===================== PANEL DEMO ===================== -->
+  <aside class="demo" aria-label="Panel demo">
+    <div class="card">
+      <span class="chip cN">Purwarupa · data fiktif</span>
+      <h1 style="margin-top:8px">REM DARURAT</h1>
+      <div class="mut" style="margin-top:4px">Protokol lapor satu sentuh yang menumpang aplikasi bank dan IASC, untuk merebut kembali jam emas korban penipuan.</div>
+      <ol>
+        <li>Buka <b>Transfer</b>, pilih contoh rekening <b>kuning</b>, lalu lihat TANDA REKENING.</li>
+        <li>Lanjutkan transfer, buka <b>Riwayat</b> dan tekan <b>Saya Tertipu</b>.</li>
+        <li>Ubah <b>waktu simulasi</b> di bawah lalu bandingkan Jarak Lapor dan jejak dana.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2 style="margin:0 0 4px;font-size:16px;color:var(--navy)">Waktu simulasi sejak transfer terakhir</h2>
+      <div class="mut" style="margin-bottom:8px" id="sim-label">Belum ada transfer baru.</div>
+      <div class="seg" role="group" aria-label="Pilih waktu simulasi">
+        <button data-sim="2" aria-pressed="true">2 mnt</button>
+        <button data-sim="30" aria-pressed="false">30 mnt</button>
+        <button data-sim="180" aria-pressed="false">3 jam</button>
+        <button data-sim="720" aria-pressed="false">12 jam</button>
+      </div>
+      <div class="note" style="margin-top:8px">Rata-rata korban melapor sekitar 12 jam setelah kejadian (OJK). Target uji coba 2028: di bawah 60 menit.</div>
+    </div>
+
+    <div class="card console">
+      <div class="row sp"><h2 style="margin:0;font-size:16px;color:var(--navy)">Konsol JEJAK DANA <span class="mut" style="font-weight:600">(sisi IASC)</span></h2><span class="chip cC">Modul 3</span></div>
+      <div id="console-body" style="margin-top:10px"><div class="mut">Belum ada laporan masuk. Kirim laporan dari ponsel untuk melihat penelusuran dana.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="legend">
+        <span class="chip cA">TANDA REKENING · mencegah</span><span class="chip cB">TOMBOL TERTIPU · melaporkan</span><span class="chip cC">JEJAK DANA · menahan</span>
+      </div>
+      <button class="btn s" id="reset" style="margin-top:12px">Ulangi demo dari awal</button>
+      <div class="note" style="margin-top:10px">Purwarupa untuk esai LESSON 2026. Nama, rekening, dan ilustrasi penyebaran dana hanya contoh dan bukan data nyata.</div>
+    </div>
+  </aside>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var ACC={
+  '88012345678':{no:'8801 2345 678',nama:'Rina Aulia',kelas:'hijau'},
+  '55219087345':{no:'5521 9087 345',nama:'Penjual Tiket Konser',kelas:'kuning',n:'dilaporkan pengguna lain'},
+  '77104432190':{no:'7710 4432 190',nama:'Rekening dalam pemblokiran',kelas:'merah'}
+};
+var BASE_BAL=12450000;
+var S;
+function fresh(){
+  return {screen:'home',bal:BASE_BAL,sim:2,
+    txs:[
+      {id:'t0',ref:'TRX-240918-0042',nama:'Listrik Prabayar',no:'Biller',nominal:200000,kelas:'hijau',seed:true,label:'Kemarin'},
+      {id:'t1',ref:'TRX-240917-0017',nama:'Kopi Kampus',no:'QRIS',nominal:38000,kelas:'hijau',seed:true,label:'Kemarin'}
+    ],
+    draft:{raw:'',amt:750000,acc:null},cur:null,consent:false,lastReport:null};
+}
+S=fresh();
+
+function rp(n){return 'Rp'+Math.round(n).toLocaleString('id-ID')}
+function dur(m){
+  if(m<60)return m+' menit';
+  if(m<1440){var h=m/60;return (Math.round(h*10)/10).toString().replace('.',',')+' jam';}
+  return Math.round(m/1440)+' hari';
+}
+function clockStr(m){var t=14*60+5+m;var h=Math.floor(t/60)%24,mm=t%60;return (h<10?'0':'')+h+'.'+(mm<10?'0':'')+mm}
+function ic(n,c){return '<svg class="i"'+(c?' style="'+c+'"':'')+'><use href="#i-'+n+'"/></svg>'}
+function lookup(d){return ACC[d]||(d.length>=8?{no:fmtNo(d),nama:'Penerima baru',kelas:'hijau'}:null)}
+function fmtNo(d){return d.replace(/(\d{4})(?=\d)/g,'$1 ').trim()}
+function kelasChip(k){return k==='hijau'?'<span class="chip cC">Hijau</span>':k==='kuning'?'<span class="chip cY">Kuning</span>':'<span class="chip cR">Merah</span>'}
+
+/* ===== navigasi ===== */
+var TABS=['home','transfer','riwayat','bantuan'];
+function go(name){
+  S.screen=name;
+  $$('.screen').forEach(function(s){s.classList.toggle('on',s.id==='s-'+name)});
+  $('#tabbar').classList.toggle('off',TABS.indexOf(name)<0);
+  $$('#tabbar button').forEach(function(b){
+    if(b.dataset.tab===name)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+  });
+  if(name==='home')renderHome();
+  if(name==='riwayat')renderRiwayat();
+  if(name==='transfer')renderCheck();
+  $('#screens').scrollTop=0;
+  var h=$('#s-'+name+' h1,#s-'+name+' h2');
+  if(h){h.setAttribute('tabindex','-1');h.focus({preventScroll:true});}
+}
+
+/* ===== beranda ===== */
+function txRow(t){
+  return '<button class="txi" data-open="'+t.id+'"><span class="av">'+ic(t.seed?'wallet':'send')+'</span><span class="m"><b>'+t.nama+'</b><span class="mut">'+(t.seed?t.label:'Baru saja')+' · '+t.no+'</span></span><span class="amt">-'+rp(t.nominal)+'</span></button>';
+}
+function renderHome(){
+  $('#bal').textContent=rp(S.bal);
+  $('#home-tx').innerHTML=S.txs.slice().reverse().slice(0,3).map(txRow).join('');
+}
+function renderRiwayat(){
+  $('#riwayat-list').innerHTML=S.txs.slice().reverse().map(txRow).join('');
+}
+
+/* ===== transfer + TANDA REKENING ===== */
+function digits(v){return (v||'').replace(/\D/g,'')}
+function parseAmt(v){return parseInt(digits(v)||'0',10)}
+function renderCheck(){
+  var d=S.draft.raw,a=lookup(d),el=$('#rek-res');
+  S.draft.acc=a;
+  if(!a){el.innerHTML='';}
+  else if(a.kelas==='hijau'){
+    el.innerHTML='<div class="ticker t-h">'+ic('check')+'<span><b>Hijau</b> · Belum ada catatan laporan di IASC. Tetap pastikan Anda mengenal penerima.</span></div>';
+  }else if(a.kelas==='kuning'){
+    el.innerHTML='<div class="ticker t-k">'+ic('alert')+'<span><b>Kuning</b> · Rekening ini pernah dilaporkan. Anda akan diminta konfirmasi.</span></div>';
+  }else{
+    el.innerHTML='<div class="ticker t-m">'+ic('alert')+'<span><b>Merah</b> · Rekening ini sedang diblokir IASC. Anda akan diminta konfirmasi.</span></div>';
+  }
+  $('#go-review').disabled=!(a&&S.draft.amt>0);
+}
+$('#rek').addEventListener('input',function(e){
+  var d=digits(e.target.value).slice(0,13);S.draft.raw=d;e.target.value=fmtNo(d);renderCheck();
+});
+$('#nom').addEventListener('input',function(e){
+  var n=parseAmt(e.target.value);S.draft.amt=n;e.target.value=n?n.toLocaleString('id-ID'):'';renderCheck();
+});
+function fill(v){var d=digits(v);S.draft.raw=d;$('#rek').value=fmtNo(d);renderCheck();$('#nom').focus()}
+
+$('#go-review').addEventListener('click',function(){
+  var a=S.draft.acc;if(!a)return;
+  if(S.draft.amt>S.bal){
+    $('#rek-res').innerHTML+='<div class="ticker t-m" role="alert" style="margin-top:8px">'+ic('alert')+'<span>Saldo tidak cukup untuk nominal ini.</span></div>';return;
+  }
+  if(a.kelas==='hijau'){renderReview();go('review');}
+  else{renderTanda();go('tanda');}
+});
+
+function renderTanda(){
+  var a=S.draft.acc,m=a.kelas==='merah';
+  S.consent=false;
+  $('#tanda-body').innerHTML=
+   '<div class="big" style="background:'+(m?'var(--R-soft)':'var(--Y-soft)')+'"><div class="ring" style="color:'+(m?'var(--R)':'var(--Y)')+'">'+ic('alert','width:38px;height:38px')+'</div>'+
+   '<h2 id="h-tanda" style="color:'+(m?'#7a1710':'#5e3f00')+'">'+(m?'Rekening ini sedang diblokir':'Rekening ini pernah dilaporkan')+'</h2>'+
+   '<div style="font-size:15px">'+(m?'IASC mencatat rekening ini terkait laporan penipuan dan sedang dalam proses pemblokiran.':'Pengguna lain pernah melaporkan rekening ini ke IASC. Belum tentu bersalah, tetapi perlu kehati-hatian.')+'</div></div>'+
+   '<div class="card"><div class="kv"><span>Rekening tujuan</span><b>'+a.no+'</b></div><div class="kv"><span>Atas nama</span><b>'+a.nama+'</b></div><div class="kv"><span>Nominal</span><b>'+rp(S.draft.amt)+'</b></div></div>'+
+   '<div class="card" style="font-size:15px"><b>Pertanyaan cepat</b><ul style="margin:6px 0 0;padding-left:20px"><li>Apakah Anda mengenal penerima secara langsung?</li><li>Apakah ada tekanan waktu, seperti tiket murah atau hadiah?</li><li>Apakah penjual meminta transfer di luar platform resmi?</li></ul></div>'+
+   '<label class="check"><input type="checkbox" id="consent"><span>Saya sudah memastikan mengenal penerima dan memahami risikonya.</span></label>'+
+   '<button class="btn g" data-act="cancel-tx">'+ic('shield')+'Batalkan transfer</button>'+
+   '<button class="btn s" id="cont" disabled>Lanjutkan setelah konfirmasi</button>';
+  $('#consent').addEventListener('change',function(e){$('#cont').disabled=!e.target.checked});
+  $('#cont').addEventListener('click',function(){renderReview();go('review')});
+}
+
+function renderReview(){
+  var a=S.draft.acc;
+  $('#review-body').innerHTML=
+   '<div class="card"><div class="kv"><span>Rekening tujuan</span><b>'+a.no+'</b></div><div class="kv"><span>Atas nama</span><b>'+a.nama+'</b></div><div class="kv"><span>Nominal</span><b>'+rp(S.draft.amt)+'</b></div><div class="kv"><span>Status TANDA</span><b>'+kelasChip(a.kelas)+'</b></div></div>'+
+   '<button class="btn p" id="send-now">'+ic('send')+'Kirim sekarang</button>';
+  $('#send-now').addEventListener('click',sendNow);
+}
+function sendNow(){
+  var a=S.draft.acc;
+  var id='t'+(S.txs.length+1);
+  var tx={id:id,ref:'TRX-241006-'+String(100+S.txs.length*7).slice(-3).padStart(4,'0'),nama:a.nama,no:a.no,nominal:S.draft.amt,kelas:a.kelas,t0:0,tClock:clockStr(0)};
+  S.txs.push(tx);S.bal-=tx.nominal;S.cur=tx.id;S.sim=2;
+  updateSim();
+  $('#done-body').innerHTML=
+   '<div class="big" style="background:var(--C-soft)"><div class="ring" style="color:var(--C)">'+ic('check','width:38px;height:38px')+'</div><h2 id="h-done" style="color:#0b4d2f">Transfer berhasil</h2><div>'+rp(tx.nominal)+' ke '+tx.nama+'</div></div>'+
+   '<div class="card mut">Ada yang janggal setelah mengirim? Buka bukti transaksi, lalu tekan <b>Saya Tertipu</b>. Semakin cepat dilaporkan, semakin besar peluang dana tertahan.</div>'+
+   '<button class="btn d" data-open="'+tx.id+'">'+ic('brake')+'Lihat bukti dan lapor</button>'+
+   '<button class="btn s" data-go="home">Kembali ke beranda</button>';
+  S.draft={raw:'',amt:750000,acc:null};$('#rek').value='';$('#nom').value='750.000';
+  go('done');
+}
+
+/* ===== detail bukti + TOMBOL TERTIPU ===== */
+function openTx(id){
+  var t=S.txs.filter(function(x){return x.id===id})[0];if(!t)return;
+  S.cur=id;
+  var rep=t.reported;
+  $('#detail-body').innerHTML=
+   '<div class="card"><div class="row sp"><b style="font-size:17px">Transfer keluar</b><span class="chip cN">Berhasil</span></div>'+
+   '<div class="amt" style="font-size:26px;margin:6px 0">'+rp(t.nominal)+'</div>'+
+   '<div class="kv"><span>Nomor referensi</span><b>'+t.ref+'</b></div><div class="kv"><span>Rekening tujuan</span><b>'+t.no+'</b></div><div class="kv"><span>Atas nama</span><b>'+t.nama+'</b></div>'+
+   '<div class="kv"><span>Waktu</span><b>'+(t.seed?t.label:'Hari ini, '+t.tClock)+'</b></div>'+
+   (t.seed?'':'<div class="kv"><span>Status TANDA saat transfer</span><b>'+kelasChip(t.kelas)+'</b></div>')+'</div>'+
+   (rep?'<button class="btn s" data-act="view-status">'+ic('route')+'Lihat status laporan</button>':
+   '<button class="btn d" data-act="report">'+ic('brake')+'SAYA TERTIPU</button><div class="mut" style="text-align:center">Lapor ke IASC dengan satu sentuhan. Data transaksi terisi otomatis.</div>');
+  go('detail');
+}
+function sheetOpen(){
+  var t=cur();if(!t)return;
+  var el=$('#sheet');
+  $('#sheet-body').innerHTML='<div class="card" style="padding:6px 14px"><div class="kv"><span>Nomor referensi</span><b>'+t.ref+'</b></div><div class="kv"><span>Rekening tujuan</span><b>'+t.no+'</b></div><div class="kv"><span>Nominal</span><b>'+rp(t.nominal)+'</b></div><div class="kv"><span>Waktu transaksi</span><b>'+(t.seed?t.label:clockStr(0))+'</b></div></div>';
+  el.classList.add('on');el.setAttribute('aria-hidden','false');$('#scrim').classList.add('on');
+  $('#sheet-ok').focus();
+}
+function sheetClose(){
+  $('#sheet').classList.remove('on');$('#sheet').setAttribute('aria-hidden','true');$('#scrim').classList.remove('on');
+}
+function cur(){return S.txs.filter(function(x){return x.id===S.cur})[0]}
+
+/* ===== status + JEJAK DANA ===== */
+var LEVEL={
+  hijau:{n:'Rendah',c:'cC',txt:'Rekening dipantau untuk aktivitas lanjutan.'},
+  kuning:{n:'Sedang',c:'cY',txt:'Dana masuk berikutnya ditahan sementara. Dasar hukumnya memerlukan ketentuan turunan POJK 22/2023 yang perlu diterbitkan.'},
+  merah:{n:'Tinggi',c:'cR',txt:'Pemblokiran diajukan melalui IASC oleh pemilik kewenangan, yaitu OJK.'}
+};
+function sendReport(){
+  var t=cur();if(!t)return;
+  t.reported=true;t.rep={min:S.sim};S.lastReport=t.id;
+  sheetClose();
+  renderStatus(t,true);go('status');
+  renderConsole();
+}
+function renderStatus(t,animate){
+  var m=t.rep?t.rep.min:S.sim,lv=LEVEL[t.kelas];
+  var pct=Math.min(100,m/720*100),zone=60/720*100;
+  var good=m<=60,mid=m<=180;
+  var col=good?'var(--C)':mid?'#E0A32E':'var(--R)';
+  var msg=good?'Di bawah target 60 menit. Jam emas berhasil direbut.':mid?'Lewat dari target 60 menit, tetapi masih jauh lebih cepat dari rata-rata.':'Setara rata-rata saat ini. Dana kemungkinan sudah dipecah ke banyak rekening.';
+  $('#status-body').innerHTML=
+   '<div class="card"><div class="row sp"><span class="mut" style="font-weight:700">JARAK LAPOR ANDA</span><span class="chip cB">Modul 2</span></div>'+
+   '<div style="font-size:34px;font-weight:800;color:'+col+';line-height:1.1;margin:4px 0 10px" id="h-status-j">'+dur(m)+'</div>'+
+   '<div class="bar" role="img" aria-label="Jarak lapor '+dur(m)+' dibanding rentang 0 sampai 12 jam"><div class="zone" style="width:'+zone+'%"></div><div class="fill" style="width:'+(animate?0:pct)+'%;background:'+col+'" id="jfill"></div></div>'+
+   '<div class="bar-l"><span>0</span><span>Target 60 menit</span><span>12 jam (rata-rata kini)</span></div>'+
+   '<div class="mut" style="margin-top:10px;font-weight:600">'+msg+'</div></div>'+
+   '<div class="card"><h2>Proses laporan</h2><ol class="steps" id="steps" aria-live="polite">'+
+   '<li><span class="n">1</span><div><b>Laporan terkirim ke IASC</b><div class="mut">Otomatis dari aplikasi bank. Referensi '+t.ref+'.</div></div></li>'+
+   '<li><span class="n">2</span><div><b>Aliran dana ditelusuri</b><div class="mut">JEJAK DANA menelusuri rekening lanjutan.</div></div></li>'+
+   '<li><span class="n">3</span><div><b>Tingkat tindakan: <span class="chip '+lv.c+'">'+lv.n+'</span></b><div class="lvl" style="background:var(--bg)">'+lv.txt+'</div></div></li>'+
+   '<li><span class="n">4</span><div><b>Hasil diinformasikan kepada Anda</b><div class="mut">Kasus yang meragukan ditinjau petugas bank beserta alasannya, tidak diputus mesin.</div></div></li></ol></div>'+
+   '<div class="card mut" style="font-size:14px">Kanal pengaduan lain tetap tersedia. Pemilik rekening tujuan yang sah berhak mengajukan keberatan.</div>';
+  var lis=$$('#steps li');
+  if(animate){
+    lis.forEach(function(li,i){setTimeout(function(){li.classList.add('on')},500+i*700)});
+    setTimeout(function(){var f=$('#jfill');if(f)f.style.width=pct+'%'},120);
+  }else{lis.forEach(function(li){li.classList.add('on')});}
+}
+
+/* ===== konsol JEJAK DANA (ilustrasi) ===== */
+function renderConsole(){
+  var t=S.txs.filter(function(x){return x.id===S.lastReport})[0],el=$('#console-body');
+  if(!t){el.innerHTML='<div class="mut">Belum ada laporan masuk. Kirim laporan dari ponsel untuk melihat penelusuran dana.</div>';return;}
+  var m=t.rep.min,lv=LEVEL[t.kelas];
+  var hops=m<=30?1:m<=180?2:4;
+  var nodes=[],edges=[];
+  nodes.push({x:70,y:110,l:'Rek. tujuan',s:hops===1?'dana masih utuh':'dana keluar',c:'#173A6B'});
+  var ys=[[110],[60,160],[30,80,140,190]][hops===1?0:hops===2?1:2];
+  if(hops>1){ys.forEach(function(y,i){nodes.push({x:260,y:y,l:'Rek. '+(i+2),s:'penerus',c:'#7f8da6'});edges.push([0,i+1]);});}
+  var svg='<svg viewBox="0 0 360 220" role="img" aria-label="Ilustrasi penyebaran dana ke '+(hops===1?'satu':hops===2?'dua':'empat')+' rekening">';
+  edges.forEach(function(e){var a=nodes[e[0]],b=nodes[e[1]];svg+='<path d="M'+(a.x+46)+' '+a.y+' C '+(a.x+110)+' '+a.y+', '+(b.x-110)+' '+b.y+', '+(b.x-46)+' '+b.y+'" fill="none" stroke="#9aa9c4" stroke-width="2" stroke-dasharray="5 4"/>';});
+  nodes.forEach(function(n,i){
+    var w=92,h=hops===1?54:i===0?54:36;
+    svg+='<rect x="'+(n.x-46)+'" y="'+(n.y-h/2)+'" width="'+w+'" height="'+h+'" rx="10" fill="'+(i===0?'#E3ECFC':'#fff')+'" stroke="'+n.c+'" stroke-width="2"/>'+
+      '<text x="'+n.x+'" y="'+(n.y-(i===0?3:1))+'" text-anchor="middle" font-size="11.5" font-weight="800" fill="#14213D">'+n.l+'</text>'+
+      (i===0?'<text x="'+n.x+'" y="'+(n.y+13)+'" text-anchor="middle" font-size="10" fill="#52617c">'+n.s+'</text>':'');
+  });
+  svg+='</svg>';
+  var tertahan=hops===1?'Besar':hops===2?'Sebagian':'Kecil';
+  el.innerHTML=
+   '<div class="kv"><span>Referensi</span><b>'+t.ref+'</b></div>'+
+   '<div class="kv"><span>Jarak Lapor</span><b>'+dur(m)+'</b></div>'+
+   '<div class="kv"><span>Tingkat tindakan</span><b><span class="chip '+lv.c+'">'+lv.n+'</span></b></div>'+svg+
+   '<div class="kv"><span>Peluang dana tertahan</span><b>'+tertahan+'</b></div>'+
+   '<div class="note">Ilustrasi mekanisme Kesenjangan Jam Emas: makin lama laporan masuk, makin banyak rekening yang dilewati dana. Bukan data nyata dan bukan prediksi angka.</div>';
+}
+
+/* ===== waktu simulasi ===== */
+function updateSim(){
+  var t=cur();
+  $('#sim-label').textContent=(S.txs.some(function(x){return !x.seed}))?'Jika dilaporkan '+dur(S.sim)+' setelah transfer terakhir.':'Belum ada transfer baru.';
+  $$('#clock').forEach(function(c){c.textContent=clockStr(S.sim)});
+  $$('[data-sim]').forEach(function(b){b.setAttribute('aria-pressed',String(parseInt(b.dataset.sim,10)===S.sim))});
+}
+
+/* ===== bantuan: keberatan ===== */
+$('#obj-send').addEventListener('click',function(){
+  var r=digits($('#obj-rek').value),w=$('#obj-why').value.trim(),el=$('#obj-res');
+  if(r.length<8||!w){el.innerHTML='<div class="ticker t-m" role="alert">'+ic('alert')+'<span>Lengkapi nomor rekening dan alasan keberatan.</span></div>';return;}
+  el.innerHTML='<div class="ticker t-h">'+ic('check')+'<span>Keberatan dicatat. Petugas bank akan meninjau kasus ini dan hasilnya diinformasikan kepada Anda.</span></div>';
+});
+
+/* ===== event delegation ===== */
+document.addEventListener('click',function(e){
+  var b=e.target.closest('[data-go],[data-open],[data-fill],[data-act],[data-sim]');if(!b)return;
+  if(b.dataset.go){go(b.dataset.go);return;}
+  if(b.dataset.open){openTx(b.dataset.open);return;}
+  if(b.dataset.fill){fill(b.dataset.fill);return;}
+  if(b.dataset.sim){S.sim=parseInt(b.dataset.sim,10);updateSim();
+    var t=cur();if(t&&!t.reported&&S.screen==='detail'){}
+    return;}
+  switch(b.dataset.act){
+    case 'cancel-tx':S.draft={raw:'',amt:750000,acc:null};$('#rek').value='';$('#nom').value='750.000';go('transfer');break;
+    case 'report':sheetOpen();break;
+    case 'view-status':renderStatus(cur(),false);go('status');break;
+  }
+});
+$('#sheet-ok').addEventListener('click',sendReport);
+$('#sheet-no').addEventListener('click',sheetClose);
+$('#scrim').addEventListener('click',sheetClose);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')sheetClose()});
+$('#reset').addEventListener('click',function(){
+  S=fresh();$('#rek').value='';$('#nom').value='750.000';
+  $('#obj-rek').value='';$('#obj-why').value='';$('#obj-res').innerHTML='';
+  sheetClose();updateSim();renderConsole();go('home');
+});
+
+updateSim();renderHome();go('home');
+})();
+</script>
+</body>
+</html>
